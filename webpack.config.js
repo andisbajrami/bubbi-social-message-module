@@ -2,7 +2,7 @@ const pkg = require("./package.json");
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 
-module.exports = (argv) => {
+module.exports = (env, argv) => {
   console.log("----------------------");
   console.log("Bubbi");
   console.log(`Version:${pkg.version}`);
@@ -12,7 +12,7 @@ module.exports = (argv) => {
   return {
     entry: {
       main: {
-        import: "./js/module.js",
+        import: ["./js/module.js", "./js/src/app.js"],
         filename: "./js/module.js",
       },
     },
@@ -63,13 +63,13 @@ module.exports = (argv) => {
       }),
     ],
     optimization: {
-      minimize: true,
+      minimize: argv.mode === "production",
       minimizer: [
         new TerserPlugin({
           extractComments: true,
           terserOptions: {
             compress: {
-              drop_console: true,
+              drop_console: argv.mode === "production",
             },
           },
         }),
