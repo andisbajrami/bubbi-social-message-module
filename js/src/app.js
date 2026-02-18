@@ -67,5 +67,5 @@ function init() {
 
 // small delay for pages that render content dynamically
 onReady(function () {
-  setTimeout(init, 600);
+  setTimeout(init, 500);
 });
