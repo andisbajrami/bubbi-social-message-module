@@ -30,8 +30,13 @@ var INFO_SELECTORS = [
 ];
 
 function findAnchor() {
-  var price = queryFirst(PRICE_SELECTORS);
-  if (price) return { el: price, pos: 'afterend' };
+  // skip price selectors on amazon to avoid breaking price structure
+  var isAmazon = /amazon\.com/i.test(window.location.hostname);
+  
+  if (!isAmazon) {
+    var price = queryFirst(PRICE_SELECTORS);
+    if (price) return { el: price, pos: 'afterend' };
+  }
 
   var form = queryFirst(FORM_SELECTORS);
   if (form) return { el: form, pos: 'beforebegin' };
