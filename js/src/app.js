@@ -49,18 +49,13 @@ function findAnchor() {
 }
 
 function tryInit() {
-  console.log('[Bubbi] tryInit called');
-  if (window.__bubbiSM) {
-    console.log('[Bubbi] Already initialized, skipping');
-    return;
-  }
+  if (window.__bubbiSM) return;
 
   if (!isProductPage()) {
     if (document.readyState === 'loading') {
       setTimeout(tryInit, 1000);
       return;
     }
-    console.log('[Bubbi] Not a product page, skip');
     return;
   }
 
@@ -74,24 +69,16 @@ function tryInit() {
       if (target || retries >= maxRetries) {
         clearInterval(retryInterval);
         if (target) {
-          console.log('[Bubbi] Anchor found after retry, mounting widget');
           window.__bubbiSM = new SocialWidget();
-          if (window.__bubbiSM.mount(target.el, target.pos)) {
-            console.log('[Bubbi] Widget mounted');
-          }
-        } else {
-          console.log('[Bubbi] No anchor found after retries');
+          window.__bubbiSM.mount(target.el, target.pos);
         }
       }
     }, 500);
     return;
   }
 
-  console.log('[Bubbi] Anchor found, mounting widget');
   window.__bubbiSM = new SocialWidget();
-  if (window.__bubbiSM.mount(target.el, target.pos)) {
-    console.log('[Bubbi] Widget mounted');
-  }
+  window.__bubbiSM.mount(target.el, target.pos);
 }
 
 onReady(function() {
