@@ -30,10 +30,26 @@ var INFO_SELECTORS = [
 ];
 
 function findAnchor() {
-  // skip price selectors on amazon to avoid breaking price structure
   var isAmazon = /amazon\.com/i.test(window.location.hostname);
   
-  if (!isAmazon) {
+  if (isAmazon) {
+    // try to find price container - look for parent with specific classes
+    var priceEl = queryFirst(['#priceblock_ourprice', '#priceblock_dealprice', '.a-price-whole', '[data-a-color="price"]']);
+    if (priceEl) {
+      var container = priceEl.closest('div[class*="price"]') || priceEl.closest('span[class*="price"]') || priceEl.parentElement;
+      if (container && container.parentElement) {
+        // make sure we're not inserting into the price itself
+        var parent = container.parentElement;
+        if (parent) return { el: parent, pos: 'afterend' };
+      }
+    }
+    
+    // fallback: find add to cart button directly
+    var cartBtn = document.getElementById('add-to-cart-button') || document.getElementById('buy-now-button');
+    if (cartBtn && cartBtn.parentElement) {
+      return { el: cartBtn.parentElement, pos: 'beforebegin' };
+    }
+  } else {
     var price = queryFirst(PRICE_SELECTORS);
     if (price) return { el: price, pos: 'afterend' };
   }
