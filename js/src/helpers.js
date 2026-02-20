@@ -14,7 +14,6 @@ function queryFirst(selectors) {
   return null;
 }
 
-// case-insensitive text search inside elements
 function findByText(tag, text) {
   var els = document.querySelectorAll(tag);
   var lower = text.toLowerCase();
@@ -31,7 +30,9 @@ function randomInt(min, max) {
 }
 
 function isProductPage() {
-  // check JSON-LD
+  // amazon has /dp/ in url
+  if (/\/dp\/[A-Z0-9]+/i.test(window.location.pathname)) return true;
+
   var ldScripts = document.querySelectorAll('script[type="application/ld+json"]');
   for (var i = 0; i < ldScripts.length; i++) {
     try {
@@ -42,17 +43,19 @@ function isProductPage() {
           if (json['@graph'][j]['@type'] === 'Product') return true;
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      // malformed json, skip
+    }
   }
 
-  // og:type
   var ogType = document.querySelector('meta[property="og:type"]');
   if (ogType && /product/i.test(ogType.getAttribute('content') || '')) return true;
 
-  // url patterns
   if (/\/(product|products|item|p|dp)(\/|$)/i.test(window.location.pathname)) return true;
 
-  // dom signals
+  // amazon dom checks
+  if (document.getElementById('productTitle') || document.getElementById('add-to-cart-button')) return true;
+
   var hasProduct = queryFirst([
     '[data-product-id]', '[data-product]',
     '[itemtype*="schema.org/Product"]',

@@ -16,13 +16,10 @@ function fillTemplates() {
   var active = randomInt(3, 19);
   var bought = randomInt(6, 48);
 
-  return TEMPLATES.map(function (tpl) {
+  return TEMPLATES.map(function(tpl) {
     return {
       icon: tpl.icon,
-      text: tpl.text
-        .replace('{viewers}', viewers)
-        .replace('{active}', active)
-        .replace('{bought}', bought)
+      text: tpl.text.replace('{viewers}', viewers).replace('{active}', active).replace('{bought}', bought)
     };
   });
 }
@@ -36,7 +33,7 @@ function SocialWidget() {
   this._timer = null;
 }
 
-SocialWidget.prototype.render = function () {
+SocialWidget.prototype.render = function() {
   this.root = document.createElement('div');
   this.root.className = 'bubbi-sm';
 
@@ -53,19 +50,19 @@ SocialWidget.prototype.render = function () {
   return this.root;
 };
 
-SocialWidget.prototype._show = function (i) {
+SocialWidget.prototype._show = function(i) {
   this.iconEl.textContent = this.messages[i].icon;
   this.textEl.textContent = this.messages[i].text;
   this.idx = i;
 };
 
-SocialWidget.prototype.startRotation = function () {
+SocialWidget.prototype.startRotation = function() {
   var self = this;
-  this._timer = setInterval(function () {
+  this._timer = setInterval(function() {
     self.textEl.classList.add('bubbi-sm__text--out');
     self.iconEl.classList.add('bubbi-sm__icon--out');
 
-    setTimeout(function () {
+    setTimeout(function() {
       self._show((self.idx + 1) % self.messages.length);
       self.textEl.classList.remove('bubbi-sm__text--out');
       self.iconEl.classList.remove('bubbi-sm__icon--out');
@@ -73,14 +70,13 @@ SocialWidget.prototype.startRotation = function () {
   }, ROTATE_INTERVAL);
 };
 
-SocialWidget.prototype.mount = function (anchor, position) {
+SocialWidget.prototype.mount = function(anchor, position) {
   if (!anchor || !anchor.parentNode) return false;
 
   var el = this.render();
   anchor.insertAdjacentElement(position || 'afterend', el);
 
-  // kick entrance animation
-  requestAnimationFrame(function () {
+  requestAnimationFrame(function() {
     el.classList.add('bubbi-sm--visible');
   });
 
@@ -88,7 +84,7 @@ SocialWidget.prototype.mount = function (anchor, position) {
   return true;
 };
 
-SocialWidget.prototype.destroy = function () {
+SocialWidget.prototype.destroy = function() {
   if (this._timer) clearInterval(this._timer);
   if (this.root && this.root.parentNode) {
     this.root.parentNode.removeChild(this.root);
